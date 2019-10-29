@@ -1,9 +1,9 @@
 import random
 from task import Task
 MIN_PERIOD = 10
-MAX_PERIOD = 100
+MAX_PERIOD = 20
 MIN_OFFSET = 0
-MAX_OFFSET = 10
+MAX_OFFSET = 5
 
 
 class TaskGenerator:
