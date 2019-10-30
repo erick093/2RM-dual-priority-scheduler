@@ -1,7 +1,8 @@
 import sys
 from task_generator import TaskGenerator
 from file_creator import FileCreator
-from task_simulator import TaskSimulator
+from simulate_dual import SimulateDual
+from fdms import Fdms
 
 class Main:
     def __init__(self):
@@ -24,11 +25,17 @@ class Main:
             elif argument == 'fdms':
                 file = FileCreator()
                 tasks = file.open_file(sys.argv[2])
+                tasks_fdms = Fdms(tasks)
+                tasks_fdms.fdms()
                 #print(tasks)
-                task_simulator = TaskSimulator(tasks)
+                #task_simulator = SimulateDual(tasks)
                # task_simulator.load_tasks()
                 #task_simulator.get_hyperperiod()
-                task_simulator.simulateDual()
+                #result = task_simulator.simulate()
+                # if result:
+                #     print("Tasks scheduled successfully")
+                # else:
+                #     print("Missed deadline")
         else:
             print("Insufficient arguments, please use correct syntax")
 

@@ -1,14 +1,15 @@
 class Job:
 
-    def __init__(self, start, end, wcet, priority, task_id, job_id):
+    def __init__(self, start, end, wcet, task_id, job_id, priority_1, priority_2, s):
         self.start = start
         self.end = end
         self.wcet = wcet
         self.usage = 0
-        self.priority = priority
-        #self.priority_2 = priority_2
+        self.priority_1 = priority_1
+        self.priority_2 = priority_2
         self.task_id = task_id
         self.job_id = job_id
+        self.s = s
 
     def get_start(self):
         return self.start
@@ -16,8 +17,19 @@ class Job:
     def get_end(self):
         return self.end
 
-    def get_priority(self):
-        return self.priority
+    def get_priority_1(self):
+        return self.priority_1
+
+    def set_priority_1(self, p):
+        self.priority_1 = p
+        return self.priority_1
+
+    def get_priority_2(self):
+        return self.priority_2
+
+    def set_priority_2(self, p):
+        self.priority_2 = p
+        return self.priority_2
 
     def get_task_id(self):
         return self.task_id
@@ -41,9 +53,10 @@ class Job:
             #print("usageF: ", self.usage)
             return False
 
-    def __repr__(self):
-        return "T"+str(self.task_id) + "J" + str(self.job_id) + " - start: " + str(self.start) + " end: " + str(
-            self.end) + " wcet: " + str(self.wcet) + " priority: " + str(self.priority)
+    # def __repr__(self):
+    #     return "T"+str(self.task_id) + "J" + str(self.job_id) + " - start: " + str(self.start) + " end: " + str(
+    #         self.end) + " wcet: " + str(self.wcet) + " priority_1: " + str(self.priority_1)
 
-    def representation(self):
-        return "T{}J{}".format(self.task_id,self.job_id)
+    def __repr__(self):
+        return "T{}J{}(s:{} e:{} c:{} p1:{} p2:{} s:{})".format(self.task_id, self.job_id, self.start, self.end,
+                                                                self.wcet, self.priority_1, self.priority_2, self.s)
