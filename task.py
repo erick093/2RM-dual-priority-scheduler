@@ -31,11 +31,11 @@ class Task:
         return self.s
 
     def set_priority_1(self, p):
-        self.priority_1 += p
+        self.priority_1 = p
         return self.priority_1
 
     def set_priority_2(self, p):
-        self.priority_2 += p
+        self.priority_2 = p
         return self.priority_2
 
     def set_s(self, s):

@@ -17,6 +17,9 @@ class Job:
     def get_end(self):
         return self.end
 
+    def get_wcet(self):
+        return self.wcet
+
     def get_priority_1(self):
         return self.priority_1
 
@@ -42,11 +45,12 @@ class Job:
         #print(self.job_id)
 
     def get_usage(self):
+        print("usage: ", self.usage)
         return self.usage
 
     def job_usage(self):
         self.usage += 1
-        if self.usage >= self.wcet:
+        if self.usage == self.wcet:
             #print("usageT: ", self.usage)
             return True
         else:
@@ -58,5 +62,5 @@ class Job:
     #         self.end) + " wcet: " + str(self.wcet) + " priority_1: " + str(self.priority_1)
 
     def __repr__(self):
-        return "T{}J{}(s:{} e:{} c:{} p1:{} p2:{} s:{})".format(self.task_id, self.job_id, self.start, self.end,
+        return "T{}J{}(st:{} e:{} c:{} p1:{} p2:{} s:{})".format(self.task_id, self.job_id, self.start, self.end,
                                                                 self.wcet, self.priority_1, self.priority_2, self.s)
