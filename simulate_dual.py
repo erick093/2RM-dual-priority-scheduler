@@ -1,18 +1,24 @@
 from jobs import Job
-from lcm import lcm
 
+import matplotlib.pyplot as plt
+import numpy as np
 
 class SimulateDual:
 
-    def __init__(self, tasks):
+    def __init__(self, tasks, stop_point):
         self.tasks = tasks
+        self.stop_point = stop_point
+        self.graphing = True
 
-    def get_hyperperiod(self):
-        hyperperiod = []
-        for task in self.tasks:
-            hyperperiod.append(task.period)
-        hyperperiod = lcm(hyperperiod)
-        return hyperperiod
+    def plot_tasks(self,tasks_order, fx, tx):
+        #fig = plt.figure()
+        colors = ['red', 'green', 'blue', 'orange', 'yellow']
+        plt.hlines(tasks_order, fx, tx, linewidth=20, colors='green')
+        plt.title('Dual Priority RM + RM Scheduler')
+        plt.grid(True)
+        plt.xlabel("Time")
+        plt.xticks(np.arange(min(fx), max(tx) + 1, 5.0))
+        plt.savefig("scheduler_{}_tasks.png".format(len(self.tasks)))
 
     def order_tasks(self):
         self.tasks.sort(key=lambda x: x.period)
@@ -49,8 +55,8 @@ class SimulateDual:
     def create_jobs(self):
         jobs = []  # jobs
         cj = self.counter()
-        hyperperiod = self.get_hyperperiod()
-        for time in range(0, hyperperiod):
+        #hyperperiod = get_hyperperiod(self.tasks)
+        for time in range(0, self.stop_point):
             for task in self.tasks:
                 if (time - task.offset) % task.period == 0 and time >= task.offset:
                     start = time
@@ -59,7 +65,6 @@ class SimulateDual:
                     priority_2 = task.priority_2
                     wcet = task.computation_time
                     task_id = task.task_id
-
                     s = start + task.s
                     jobs.append(Job(start, end, wcet, task_id, cj[task.task_id], priority_1, priority_2, s))
                     cj[task.task_id] += 1
@@ -68,13 +73,16 @@ class SimulateDual:
         return jobs
 
     def simulate(self):
+        tasks_order = []
+        fx = []
+        tx = []
         self.order_tasks()
         self.assign_priority_1()
         self.assign_priority_2()
         jobs = self.create_jobs()
-        hyperperiod = self.get_hyperperiod()
-        print("Schedule from: 0 to: {} ; {} tasks".format(hyperperiod, len(self.tasks)))
-        for time in range(0, hyperperiod):
+        #hyperperiod = get_hyperperiod(self.tasks)
+        print("Schedule from: 0 to: {} ; {} tasks".format(self.stop_point, len(self.tasks)))
+        for time in range(0, self.stop_point):
             queue_jobs = []
             for job in jobs:
                 if time == job.s:
@@ -87,6 +95,9 @@ class SimulateDual:
             print(queue_jobs)
 
             if len(queue_jobs) > 0:
+                tasks_order.append("Task{}".format(queue_jobs[0].task_id))
+                fx.append(time)
+                tx.append(time+1)
                 print("{}-{}: T{}J{}".format(time, time + 1, queue_jobs[0].task_id, queue_jobs[0].get_job_id()))
                 job_usage = queue_jobs[0].job_usage()
                 if job_usage:
@@ -97,24 +108,14 @@ class SimulateDual:
                         if time + 1 == job.end:
                             print("Missed deadline --- Stopping...")
                             return False, job.get_task_id()
-                    # if time + 1 == queue_jobs[0].end:
-                    #     print("Missed deadline --- Stopping...")
-                    #     return False, queue_jobs[0].get_task_id()
-
-                # if time + 1 == queue_jobs[0].end and queue_jobs[0].get_usage() < queue_jobs[0].get_wcet():
-                #     print("Missed deadline --- Stopping...")
-                #     return False, queue_jobs[0].get_task_id()
-                #     #break
-                #
-                # if job_usage:
-                #     print("T{}J{} Finished".format(queue_jobs[0].task_id, queue_jobs[0].job_id))
-                #     # print("lenght of jobs: ",len(jobs))
-                #     # print("lenght of queue: ",len(queue_jobs))
-                #     jobs.remove(queue_jobs[0])
             else:
                 print("{}-{}: idle slot".format(time, time + 1))
 
         print("END")
+        if self.graphing:
+            self.plot_tasks(tasks_order, fx, tx)
+
+
         return True, -1
 
 

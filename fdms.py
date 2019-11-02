@@ -1,5 +1,5 @@
 from simulate_dual import SimulateDual
-
+from lcm import get_hyperperiod
 
 class Fdms:
 
@@ -17,11 +17,10 @@ class Fdms:
     def fdms(self):
         self.initiate_s()
         print("Tasks initialized with S: ", self.tasks)
-        print("before")
         print(self.tasks)
-        tasks_simulated = SimulateDual(self.tasks)
-        #print("after")
-        #print(self.tasks)
+        stop_point = get_hyperperiod(self.tasks)
+        print("HP: {}".format(stop_point))
+        tasks_simulated = SimulateDual(self.tasks, stop_point)
         result, t_id = tasks_simulated.simulate()
         while not result:
             if self.tasks[t_id].get_s() == 0:
