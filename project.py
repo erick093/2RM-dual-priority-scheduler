@@ -36,15 +36,24 @@ class Main:
                 tasks = self.r_file(sys.argv[2])
                 tasks_fdms = Fdms(tasks)
                 tasks_fdms.fdms()
+                tasks_fdms.print_s()
             elif argument == 'simulation':
-                print("simulation")
                 tasks = self.r_file(sys.argv[2])
                 stop_time = int(sys.argv[3])
-                scheduler = SimulateDual(tasks, stop_time)
-                result, t_id = scheduler.simulate()
+                fdms = Fdms(tasks)
+                fdms.fdms()
+                scheduler = SimulateDual(tasks, stop_time, False, True)
+                scheduler.simulate()
 
 
-            #elif argument == 'simulation_graph':
+            elif argument == 'simulation_graph':
+                tasks = self.r_file(sys.argv[2])
+                stop_time = int(sys.argv[3])
+                fdms = Fdms(tasks)
+                fdms.fdms()
+                scheduler = SimulateDual(tasks, stop_time, True, False)
+                scheduler.simulate()
+
 
         else:
             print("Insufficient arguments, please use correct syntax")
