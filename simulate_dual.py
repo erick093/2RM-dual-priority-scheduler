@@ -5,22 +5,21 @@ import numpy as np
 
 class SimulateDual:
 
-    def __init__(self, tasks, stop_point, graphing, scheduling):
+    def __init__(self, tasks, stop_point, graphing, show_data):
         self.tasks = tasks
         self.stop_point = stop_point
         self.graphing = graphing
-        self.scheduling = scheduling
+        self.show_data = show_data
 
     def plot_tasks(self,tasks_order, fx, tx):
-        #fig = plt.figure()
         colors = ['red', 'green', 'blue', 'orange', 'yellow']
         plt.hlines(tasks_order, fx, tx, linewidth=20, colors='green')
-        plt.title('Dual Priority RM + RM Scheduler')
-        plt.grid(True)
+        plt.title('Dual Priority RM + RM Scheduler.')
+        plt.grid(True, linestyle="dashed")
         plt.xlabel("Time")
-        plt.xticks(np.arange(min(fx), max(tx) + 1, 5.0))
+        #plt.xlim(-0.04 * self.stop_point, self.stop_point + 0.04 * self.stop_point)
         plt.savefig("scheduler_{}_tasks.png".format(len(self.tasks)))
-
+        plt.show()
     def order_tasks(self):
         self.tasks.sort(key=lambda x: x.period)
         #print("ordered tasks by period", self.tasks)
@@ -81,7 +80,7 @@ class SimulateDual:
         self.assign_priority_1()
         self.assign_priority_2()
         jobs = self.create_jobs()
-        if self.scheduling:
+        if self.show_data:
             print("Schedule from: 0 to: {} ; {} tasks".format(self.stop_point, len(self.tasks)))
         for time in range(0, self.stop_point):
             queue_jobs = []
@@ -99,7 +98,7 @@ class SimulateDual:
                 tasks_order.append("Task{}".format(queue_jobs[0].task_id))
                 fx.append(time)
                 tx.append(time+1)
-                if self.scheduling:
+                if self.show_data:
                     print("{}-{}: T{}J{}".format(time, time + 1, queue_jobs[0].task_id, queue_jobs[0].get_job_id()))
                 job_usage = queue_jobs[0].job_usage()
                 if job_usage:
@@ -111,9 +110,9 @@ class SimulateDual:
                             #print("Missed deadline --- Stopping...")
                             return False, job.get_task_id()
             else:
-                if self.scheduling:
+                if self.show_data:
                     print("{}-{}: idle slot".format(time, time + 1))
-        if self.scheduling:
+        if self.show_data:
             print("END")
         if self.graphing:
             self.plot_tasks(tasks_order, fx, tx)
