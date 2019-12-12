@@ -1,27 +1,29 @@
 from task import Task
 
 
-class FileCreator:
+class TaskFileManager:
     def __init__(self):
         pass
 
-    def write_file(self, tasks, file):
-
+    @staticmethod
+    def write_file(tasks, file):
         file = open(file, 'w')
         for task in tasks:
-            file.write("{}; {}; {} \n".format(task.get_offset(), task.get_computation_time(), task.get_period())) #generates tuple(Offset;WCET,Period)
+            file.write("{}; {}; {} \n".format(task.get_offset(), task.get_computation_time(), task.get_period()))
         file.close()
 
-    def open_file(self,file):
+    @staticmethod
+    def read_file(file_name):
         tasks = []
         task_id = 0
-        f = open(file, "r")
-        for x in f:
-            line = x.split(";")
-            tasks.append(Task(int(line[0]), int(line[1]), int(line[2]), task_id))
+        file = open(file_name, "r")
+        for line in file:
+            task_values = line.split(";")
+            tasks.append(Task(int(task_values[0]), int(task_values[1]), int(task_values[2]), task_id))
             task_id += 1
-        f.close()
+        file.close()
         return tasks
+
 
 
 

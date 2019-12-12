@@ -19,7 +19,7 @@ class Fdms:
         print("Tasks initialized with S: ", self.tasks)
         print(self.tasks)
         stop_point = get_hyperperiod(self.tasks)
-        print("HP: {}".format(stop_point))
+        #print("HP: {}".format(stop_point))
         tasks_simulated = SimulateDual(self.tasks, stop_point)
         result, t_id = tasks_simulated.simulate()
         while not result:
@@ -34,6 +34,7 @@ class Fdms:
                         task.set_s(task.get_s() - 1)
                         result, t_id = tasks_simulated.simulate()
                 #self.tasks[t_id].set_s(self.tasks[t_id].get_s() - 1)
+
                 #result, t_id = tasks_simulated.simulate()
         if result:
             print("Tasks scheduled successfully.")

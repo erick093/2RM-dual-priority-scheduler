@@ -22,21 +22,21 @@ class SimulateDual:
 
     def order_tasks(self):
         self.tasks.sort(key=lambda x: x.period)
-        print("ordered tasks by period", self.tasks)
+        # print("ordered tasks by period", self.tasks)
 
     def assign_priority_1(self):
         c = len(self.tasks) + 1
         for task in self.tasks:
             task.set_priority_1(c)
             c += 1
-        print("Tasks assigned P1: {}".format(self.tasks))
+        #print("Tasks assigned P1: {}".format(self.tasks))
 
     def assign_priority_2(self):
         c = 1
         for task in self.tasks:
             task.set_priority_2(c)
             c += 1
-        print("Tasks assigned P2: {}".format(self.tasks))
+        #print("Tasks assigned P2: {}".format(self.tasks))
 
     def get_utilization(self):
         u = 0
@@ -72,6 +72,9 @@ class SimulateDual:
         #print(jobs)
         return jobs
 
+    def print_intervals(self, task_id, job_id, start_time, end_time):
+        print("{}-{}: T{}J{}".format(start_time, end_time, task_id, job_id))
+
     def simulate(self):
         tasks_order = []
         fx = []
@@ -82,35 +85,45 @@ class SimulateDual:
         jobs = self.create_jobs()
         #hyperperiod = get_hyperperiod(self.tasks)
         print("Schedule from: 0 to: {} ; {} tasks".format(self.stop_point, len(self.tasks)))
+        last_task_id = -1
+        last_job_id = -1
+        start_job_time = 0
         for time in range(0, self.stop_point):
             queue_jobs = []
             for job in jobs:
                 if time == job.s:
-                    print("T:{}J:{} time:{} s:{} P1:{}--->P2:{}".format(job.task_id, job.job_id, time, job.s,
-                                                                        job.priority_1, job.priority_2))
+                    #print("T:{}J:{} time:{} s:{} P1:{}--->P2:{}".format(job.task_id, job.job_id, time, job.s,
+                     #                                                   job.priority_1, job.priority_2))
                     job.set_priority_1(job.get_priority_2())
                 if job.start <= time:
                     queue_jobs.append(job)
             queue_jobs.sort(key=lambda x: x.priority_1)
-            print(queue_jobs)
+            #print(queue_jobs)
 
             if len(queue_jobs) > 0:
                 tasks_order.append("Task{}".format(queue_jobs[0].task_id))
                 fx.append(time)
                 tx.append(time+1)
-                print("{}-{}: T{}J{}".format(time, time + 1, queue_jobs[0].task_id, queue_jobs[0].get_job_id()))
+                if(last_task_id != -1 and last_job_id != -1 and (last_job_id != queue_jobs[0].get_job_id()
+                        or last_task_id != queue_jobs[0].task_id)):
+                    self.print_intervals(last_task_id,last_job_id, start_job_time, time)
+                    start_job_time = time
+                last_task_id = queue_jobs[0].task_id
+                last_job_id = queue_jobs[0].get_job_id()
+                #print("{}-{}: T{}J{}".format(time, time + 1, queue_jobs[0].task_id, queue_jobs[0].get_job_id()))
                 job_usage = queue_jobs[0].job_usage()
                 if job_usage:
-                    print("T{}J{} Finished".format(queue_jobs[0].task_id, queue_jobs[0].job_id))
+                    #print("T{}J{} Finished".format(queue_jobs[0].task_id, queue_jobs[0].job_id))
                     jobs.remove(queue_jobs[0])
                 else:
                     for job in jobs:
                         if time + 1 == job.end:
-                            print("Missed deadline --- Stopping...")
+                            #print("Missed deadline --- Stopping...")
+                            self.print_intervals(last_task_id, last_job_id, start_job_time, time + 1)
                             return False, job.get_task_id()
             else:
                 print("{}-{}: idle slot".format(time, time + 1))
-
+        self.print_intervals(last_task_id, last_job_id, start_job_time, time+1)
         print("END")
         if self.graphing:
             self.plot_tasks(tasks_order, fx, tx)

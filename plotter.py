@@ -11,8 +11,6 @@ class Plotter:
         plt.ylabel("Tasks")
         plt.grid(True, linestyle="--")
 
-    #def plot_dual_priority(self):
-
     def plot_tasks(self):
         for task in self.tasks:
             period = task.get_period()
