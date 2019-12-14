@@ -18,23 +18,23 @@ class Main:
     @staticmethod
     def fdms(file):
         tasks = TaskFileManager.read_file(file)
-        tasks_fdms = Fdms(tasks)
+        tasks_fdms = Fdms(tasks, show_data=True)
         tasks_fdms.fdms()
 
     @staticmethod
     def simulate(file, stop_time):
         tasks = TaskFileManager.read_file(file)
-        fdms = Fdms(tasks)
+        fdms = Fdms(tasks, show_data=False)
         fdms.fdms()
-        scheduler = SimulateDual(tasks, stop_time)
+        scheduler = SimulateDual(tasks, stop_time, graphing=False, show_data=True)
         result, t_id = scheduler.simulate()
 
     @staticmethod
     def simulate_graph(file,stop_time):
         tasks = TaskFileManager.read_file(file)
-        fdms = Fdms(tasks)
+        fdms = Fdms(tasks, show_data=False)
         fdms.fdms()
-        scheduler = SimulateDual(tasks, stop_time, graphing=True)
+        scheduler = SimulateDual(tasks, stop_time, graphing=True, show_data=False)
         scheduler.simulate()
 
     @staticmethod
