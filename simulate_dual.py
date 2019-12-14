@@ -5,10 +5,11 @@ import numpy as np
 
 class SimulateDual:
 
-    def __init__(self, tasks, stop_point, graphing=False):
+    def __init__(self, tasks, stop_point, graphing=False, show_data=False):
         self.tasks = tasks
         self.stop_point = stop_point
         self.graphing = graphing
+        self.show_data = show_data
 
     def plot_tasks(self, tasks_order, fx, tx, task_deadline, task_s, task_init):
 
@@ -76,11 +77,12 @@ class SimulateDual:
         return jobs
 
     def print_intervals(self, task_id, job_id, start_time, end_time, is_idle):
-        if is_idle == 1:
-            message = "{}-{}: Idle slot".format(start_time, end_time)
-        else:
-            message = "{}-{}: T{}J{}".format(start_time, end_time, task_id, job_id)
-        print(message)
+        if self.show_data:
+            if is_idle == 1:
+                message = "{}-{}: Idle slot".format(start_time, end_time)
+            else:
+                message = "{}-{}: T{}J{}".format(start_time, end_time, task_id, job_id)
+            print(message)
 
 
     def simulate(self):
@@ -135,7 +137,8 @@ class SimulateDual:
                 else:
                     for job in jobs:
                         if time + 1 == job.end:
-                            print("Missed deadline --- Stopping...")
+                            if self.show_data:
+                                print("Missed deadline --- Stopping...")
                             self.print_intervals(last_task_id, last_job_id, start_job_time, time + 1, 0)
                             return False, job.get_task_id()
             else:
@@ -147,9 +150,10 @@ class SimulateDual:
                 self.print_intervals(0, 0, time, time + 1, 1)
         if (last_task_id != -1):
             self.print_intervals(last_task_id, last_job_id, start_job_time, time+1, 0)
-        print("END")
+        if self.show_data:
+            print("END")
         if self.graphing:
-            self.plot_tasks(tasks_order, fx, tx)
+            self.plot_tasks(tasks_order, fx, tx, task_deadline, task_s, task_init)
         return True, -1
 
 
