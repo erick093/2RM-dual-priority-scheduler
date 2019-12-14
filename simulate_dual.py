@@ -72,8 +72,13 @@ class SimulateDual:
         #print(jobs)
         return jobs
 
-    def print_intervals(self, task_id, job_id, start_time, end_time):
-        print("{}-{}: T{}J{}".format(start_time, end_time, task_id, job_id))
+    def print_intervals(self, task_id, job_id, start_time, end_time, is_idle):
+        if is_idle == 1:
+            message = "{}-{}: Idle slot".format(start_time, end_time)
+        else:
+            message = "{}-{}: T{}J{}".format(start_time, end_time, task_id, job_id)
+        print(message)
+
 
     def simulate(self):
         tasks_order = []
@@ -84,7 +89,7 @@ class SimulateDual:
         self.assign_priority_2()
         jobs = self.create_jobs()
         #hyperperiod = get_hyperperiod(self.tasks)
-        print("Schedule from: 0 to: {} ; {} tasks".format(self.stop_point, len(self.tasks)))
+        #print("Schedule from: 0 to: {} ; {} tasks".format(self.stop_point, len(self.tasks)))
         last_task_id = -1
         last_job_id = -1
         start_job_time = 0
@@ -106,7 +111,7 @@ class SimulateDual:
                 tx.append(time+1)
                 if(last_task_id != -1 and last_job_id != -1 and (last_job_id != queue_jobs[0].get_job_id()
                         or last_task_id != queue_jobs[0].task_id)):
-                    self.print_intervals(last_task_id,last_job_id, start_job_time, time)
+                    self.print_intervals(last_task_id,last_job_id, start_job_time, time, 0)
                     start_job_time = time
                 last_task_id = queue_jobs[0].task_id
                 last_job_id = queue_jobs[0].get_job_id()
@@ -118,17 +123,21 @@ class SimulateDual:
                 else:
                     for job in jobs:
                         if time + 1 == job.end:
-                            #print("Missed deadline --- Stopping...")
-                            self.print_intervals(last_task_id, last_job_id, start_job_time, time + 1)
+                            print("Missed deadline --- Stopping...")
+                            self.print_intervals(last_task_id, last_job_id, start_job_time, time + 1, 0)
                             return False, job.get_task_id()
             else:
-                print("{}-{}: idle slot".format(time, time + 1))
-        self.print_intervals(last_task_id, last_job_id, start_job_time, time+1)
+                if ( last_task_id != -1) :
+                    self.print_intervals(last_task_id, last_job_id, start_job_time, time, 0)
+                last_task_id = -1
+                last_job_id = -1
+                start_job_time = time
+                self.print_intervals(0, 0, time, time + 1, 1)
+        if (last_task_id != -1):
+            self.print_intervals(last_task_id, last_job_id, start_job_time, time+1, 0)
         print("END")
         if self.graphing:
             self.plot_tasks(tasks_order, fx, tx)
-
-
         return True, -1
 
 
