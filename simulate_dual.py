@@ -10,23 +10,18 @@ class SimulateDual:
         self.stop_point = stop_point
         self.graphing = graphing
 
-    def plot_tasks(self,tasks_order, fx, tx, task_deadline, task_s):
-        print(task_deadline)
-        print(tasks_order)
-        print(fx)
-        print(tx)
-        #fig = plt.figure()
-        colors = ['red', 'green', 'blue', 'orange', 'yellow']
+    def plot_tasks(self, tasks_order, fx, tx, task_deadline, task_s, task_init):
+
         plt.hlines(tasks_order, fx, tx, linewidth=20, colors='green')
         plt.plot(task_deadline, tasks_order, 'ro', marker='v', label="Deadline")
-        plt.plot(task_s, tasks_order, 'bo', marker='|', label="S")
+        plt.plot(task_s, tasks_order, 'bo', marker='|', label="S", markersize=10.0)
+        plt.plot(task_init, tasks_order, 'ko', marker='.', label="Start", markersize=4.0)
         plt.legend(loc='center right', prop={'size': 8})
         plt.title('Dual Priority RM + RM Scheduler')
         plt.grid(True)
         plt.xlabel("Time")
         plt.xticks(np.arange(min(fx), max(tx) + 1, 5.0))
         plt.savefig("scheduler_{}_tasks.png".format(len(self.tasks)))
-        plt.show()
 
     def order_tasks(self):
         self.tasks.sort(key=lambda x: x.period)
@@ -93,6 +88,7 @@ class SimulateDual:
         tasks_order = []
         task_deadline = []
         task_s = []
+        task_init = []
 
         fx = []
         tx = []
@@ -115,13 +111,14 @@ class SimulateDual:
                 if job.start <= time:
                     queue_jobs.append(job)
             queue_jobs.sort(key=lambda x: x.priority_1)
-            print("Printing queue", queue_jobs)
+            #print("Printing queue", queue_jobs)
 
             if len(queue_jobs) > 0:
                 tasks_order.append("Task{}".format(queue_jobs[0].task_id))
                 #task_test_deadline.append(("Task{}".format(queue_jobs[0].task_id), queue_jobs[0].end))
                 task_deadline.append(queue_jobs[0].end)
                 task_s.append(queue_jobs[0].s)
+                task_init.append(queue_jobs[0].start)
                 fx.append(time)
                 tx.append(time+1)
                 if(last_task_id != -1 and last_job_id != -1 and (last_job_id != queue_jobs[0].get_job_id()
