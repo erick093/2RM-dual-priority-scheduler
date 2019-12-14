@@ -18,14 +18,24 @@ class Main:
     @staticmethod
     def fdms(file):
         tasks = TaskFileManager.read_file(file)
-        tasks_fdms = Fdms(tasks)
+        tasks_fdms = Fdms(tasks, show_data=True)
         tasks_fdms.fdms()
 
     @staticmethod
     def simulate(file, stop_time):
         tasks = TaskFileManager.read_file(file)
-        scheduler = SimulateDual(tasks, stop_time)
+        fdms = Fdms(tasks, show_data=False)
+        fdms.fdms()
+        scheduler = SimulateDual(tasks, stop_time, graphing=False, show_data=True)
         result, t_id = scheduler.simulate()
+
+    @staticmethod
+    def simulate_graph(file,stop_time):
+        tasks = TaskFileManager.read_file(file)
+        fdms = Fdms(tasks, show_data=False)
+        fdms.fdms()
+        scheduler = SimulateDual(tasks, stop_time, graphing=True, show_data=False)
+        scheduler.simulate()
 
     @staticmethod
     def execute():
@@ -41,6 +51,8 @@ class Main:
                 Main.fdms(sys.argv[2])
             elif mode == 'simulation':
                 Main.simulate(sys.argv[2], int(sys.argv[3]))
+            elif mode == 'simulation_graph':
+                Main.simulate_graph(sys.argv[2], int(sys.argv[3]))
             else:
                 print("Unrecognized mode.")
         else:

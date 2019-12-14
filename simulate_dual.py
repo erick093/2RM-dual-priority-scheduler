@@ -5,15 +5,19 @@ import numpy as np
 
 class SimulateDual:
 
-    def __init__(self, tasks, stop_point):
+    def __init__(self, tasks, stop_point, graphing=False, show_data=False):
         self.tasks = tasks
         self.stop_point = stop_point
-        self.graphing = True
+        self.graphing = graphing
+        self.show_data = show_data
 
-    def plot_tasks(self,tasks_order, fx, tx):
-        #fig = plt.figure()
-        colors = ['red', 'green', 'blue', 'orange', 'yellow']
+    def plot_tasks(self, tasks_order, fx, tx, task_deadline, task_s, task_init):
+
         plt.hlines(tasks_order, fx, tx, linewidth=20, colors='green')
+        plt.plot(task_deadline, tasks_order, 'ro', marker='v', label="Deadline")
+        plt.plot(task_s, tasks_order, 'bo', marker='|', label="S", markersize=10.0)
+        plt.plot(task_init, tasks_order, 'ko', marker='.', label="Start", markersize=4.0)
+        plt.legend(loc='center right', prop={'size': 8})
         plt.title('Dual Priority RM + RM Scheduler')
         plt.grid(True)
         plt.xlabel("Time")
@@ -73,15 +77,21 @@ class SimulateDual:
         return jobs
 
     def print_intervals(self, task_id, job_id, start_time, end_time, is_idle):
-        if is_idle == 1:
-            message = "{}-{}: Idle slot".format(start_time, end_time)
-        else:
-            message = "{}-{}: T{}J{}".format(start_time, end_time, task_id, job_id)
-        print(message)
+        if self.show_data:
+            if is_idle == 1:
+                message = "{}-{}: Idle slot".format(start_time, end_time)
+            else:
+                message = "{}-{}: T{}J{}".format(start_time, end_time, task_id, job_id)
+            print(message)
 
 
     def simulate(self):
+        #arrays used for plotting
         tasks_order = []
+        task_deadline = []
+        task_s = []
+        task_init = []
+
         fx = []
         tx = []
         self.order_tasks()
@@ -103,10 +113,14 @@ class SimulateDual:
                 if job.start <= time:
                     queue_jobs.append(job)
             queue_jobs.sort(key=lambda x: x.priority_1)
-            #print(queue_jobs)
+            #print("Printing queue", queue_jobs)
 
             if len(queue_jobs) > 0:
                 tasks_order.append("Task{}".format(queue_jobs[0].task_id))
+                #task_test_deadline.append(("Task{}".format(queue_jobs[0].task_id), queue_jobs[0].end))
+                task_deadline.append(queue_jobs[0].end)
+                task_s.append(queue_jobs[0].s)
+                task_init.append(queue_jobs[0].start)
                 fx.append(time)
                 tx.append(time+1)
                 if(last_task_id != -1 and last_job_id != -1 and (last_job_id != queue_jobs[0].get_job_id()
@@ -123,7 +137,8 @@ class SimulateDual:
                 else:
                     for job in jobs:
                         if time + 1 == job.end:
-                            print("Missed deadline --- Stopping...")
+                            if self.show_data:
+                                print("Missed deadline --- Stopping...")
                             self.print_intervals(last_task_id, last_job_id, start_job_time, time + 1, 0)
                             return False, job.get_task_id()
             else:
@@ -135,9 +150,10 @@ class SimulateDual:
                 self.print_intervals(0, 0, time, time + 1, 1)
         if (last_task_id != -1):
             self.print_intervals(last_task_id, last_job_id, start_job_time, time+1, 0)
-        print("END")
+        if self.show_data:
+            print("END")
         if self.graphing:
-            self.plot_tasks(tasks_order, fx, tx)
+            self.plot_tasks(tasks_order, fx, tx, task_deadline, task_s, task_init)
         return True, -1
 
 
