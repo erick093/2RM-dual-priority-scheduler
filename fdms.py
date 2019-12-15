@@ -12,9 +12,10 @@ class Fdms:
             task.set_s(task.period)
 
     def print_s(self):
-        print("----S VALUES---")
-        for task in self.tasks:
-           print("Task {}: {}".format(task.get_id(), task.get_s()))
+        if self.show_data:
+            print("----S VALUES---")
+            for task in self.tasks:
+               print("Task {}: {}".format(task.get_id(), task.get_s()))
 
     def fdms(self):
         self.initiate_s()

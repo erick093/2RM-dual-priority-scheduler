@@ -7,11 +7,12 @@ import numpy as np
 
 class SimulateDual:
 
-    def __init__(self, tasks, stop_point, graphing=False, show_data=False):
+    def __init__(self, tasks, stop_point, graphing=False, show_data=False, is_graph=False):
         self.tasks = tasks
         self.stop_point = stop_point
         self.graphing = graphing
         self.show_data = show_data
+        self.is_graph = is_graph
 
     def plot_tasks(self, tasks_order, fx, tx, task_deadline, task_s, task_init):
         plt.hlines(tasks_order, fx, tx, linewidth=20, colors='green')
@@ -92,7 +93,8 @@ class SimulateDual:
         self.assign_priority_1()
         self.assign_priority_2()
         jobs = self.create_jobs()
-        print("Schedule from: 0 to: {} ; {} tasks".format(self.stop_point, len(self.tasks)))
+        if self.show_data:
+            print("Schedule from: 0 to: {} ; {} tasks".format(self.stop_point, len(self.tasks)))
         last_task_id = -1
         last_job_id = -1
         start_job_time = 0
@@ -133,7 +135,7 @@ class SimulateDual:
                     self.print_intervals(last_task_id, last_job_id, start_job_time, time, False)
                 last_task_id = -1
                 last_job_id = -1
-                start_job_time = time
+                start_job_time = time + 1
                 self.print_intervals(0, 0, time, time + 1, True)
         if last_task_id != -1:
             self.print_intervals(last_task_id, last_job_id, start_job_time, time + 1, False)
