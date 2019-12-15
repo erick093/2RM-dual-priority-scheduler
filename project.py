@@ -40,20 +40,19 @@ class Main:
                 if len(sys.argv) > 4:
                     Main.generate(int(sys.argv[2]), int(sys.argv[3]), sys.argv[4])
                 else:
-                    print("Arguments missing: Please use the form: gen  number_of_tasks  utilization_percentage  "
-                          "filename.txt")
+                    print("ERROR: Missing arguments. --gen tasks utilization output-file")
             elif mode == 'fdms':
                 Main.fdms(sys.argv[2])
             elif mode == 'simulation':
                 if len(sys.argv) > 3:
                     Main.simulate(sys.argv[2], int(sys.argv[3]), False)
                 else:
-                    print("ERROR: Missing arguments")
+                    print("ERROR: Missing arguments. --simulation input-file stop-point")
             elif mode == 'simulation_graph':
                 if len(sys.argv) > 3:
                     Main.simulate(sys.argv[2], int(sys.argv[3]), True)
                 else:
-                    print("ERROR: Missing arguments")
+                    print("ERROR: Missing arguments. -- simulation_graph input-file stop-point")
             else:
                 print("Unrecognized mode.")
         else:
@@ -62,5 +61,3 @@ class Main:
 
 if __name__ == '__main__':
     Main.execute()
-
-
