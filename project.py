@@ -18,24 +18,19 @@ class Main:
     @staticmethod
     def fdms(file):
         tasks = TaskFileManager.read_file(file)
-        tasks_fdms = Fdms(tasks, show_data=True)
-        tasks_fdms.fdms()
+        if tasks:
+            tasks_fdms = Fdms(tasks, show_data=True)
+            tasks_fdms.fdms()
 
     @staticmethod
-    def simulate(file, stop_time):
+    def simulate(file, stop_time, is_graph):
         tasks = TaskFileManager.read_file(file)
-        fdms = Fdms(tasks, show_data=False)
-        fdms.fdms()
-        scheduler = SimulateDual(tasks, stop_time, graphing=False, show_data=True)
-        result, t_id = scheduler.simulate()
-
-    @staticmethod
-    def simulate_graph(file,stop_time):
-        tasks = TaskFileManager.read_file(file)
-        fdms = Fdms(tasks, show_data=False)
-        fdms.fdms()
-        scheduler = SimulateDual(tasks, stop_time, graphing=True, show_data=False)
-        scheduler.simulate()
+        if tasks:
+            tasks = TaskFileManager.read_file(file)
+            fdms = Fdms(tasks, show_data=False)
+            fdms.fdms()
+            scheduler = SimulateDual(tasks, stop_time, graphing=is_graph, show_data=not is_graph)
+            scheduler.simulate()
 
     @staticmethod
     def execute():
@@ -50,9 +45,15 @@ class Main:
             elif mode == 'fdms':
                 Main.fdms(sys.argv[2])
             elif mode == 'simulation':
-                Main.simulate(sys.argv[2], int(sys.argv[3]))
+                if len(sys.argv) > 3:
+                    Main.simulate(sys.argv[2], int(sys.argv[3]), False)
+                else:
+                    print("ERROR: Missing arguments")
             elif mode == 'simulation_graph':
-                Main.simulate_graph(sys.argv[2], int(sys.argv[3]))
+                if len(sys.argv) > 3:
+                    Main.simulate(sys.argv[2], int(sys.argv[3]), True)
+                else:
+                    print("ERROR: Missing arguments")
             else:
                 print("Unrecognized mode.")
         else:

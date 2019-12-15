@@ -57,10 +57,6 @@ class Job:
             #print("usageF: ", self.usage)
             return False
 
-    # def __repr__(self):
-    #     return "T"+str(self.task_id) + "J" + str(self.job_id) + " - start: " + str(self.start) + " end: " + str(
-    #         self.end) + " wcet: " + str(self.wcet) + " priority_1: " + str(self.priority_1)
-
     def __repr__(self):
         return "T{}J{}(st:{} e:{} c:{} p1:{} p2:{} s:{})".format(self.task_id, self.job_id, self.start, self.end,
                                                                 self.wcet, self.priority_1, self.priority_2, self.s)

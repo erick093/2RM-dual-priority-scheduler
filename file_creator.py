@@ -16,13 +16,17 @@ class TaskFileManager:
     def read_file(file_name):
         tasks = []
         task_id = 0
-        file = open(file_name, "r")
-        for line in file:
-            task_values = line.split(";")
-            tasks.append(Task(int(task_values[0]), int(task_values[1]), int(task_values[2]), task_id))
-            task_id += 1
-        file.close()
-        return tasks
+        try:
+            file = open(file_name, "r")
+            for line in file:
+                task_values = line.split(";")
+                tasks.append(Task(int(task_values[0]), int(task_values[1]), int(task_values[2]), task_id))
+                task_id += 1
+            file.close()
+            return tasks
+        except:
+            print("ERROR: File not found")
+
 
 
 
